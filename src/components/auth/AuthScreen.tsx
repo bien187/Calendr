@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CalendarDays } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Field";
 import {
@@ -61,9 +61,7 @@ export function AuthScreen() {
     <div className="grid min-h-dvh place-items-center bg-bg px-5 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-accent text-white shadow-lg shadow-accent/30">
-            <CalendarDays className="h-7 w-7" />
-          </div>
+          <Logo size={56} className="mx-auto mb-4 shadow-lg shadow-black/10" />
           <h1 className="text-2xl font-bold tracking-tight">Calendr</h1>
           <p className="mt-1 text-sm text-muted">
             Der gemeinsame Kalender für deine Familie.

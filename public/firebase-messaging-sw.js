@@ -24,8 +24,8 @@ messaging.onBackgroundMessage((payload) => {
   const { title, body } = payload.notification || {};
   self.registration.showNotification(title || "Calendr", {
     body: body || "Du hast einen anstehenden Termin.",
-    icon: "/icon-192.png",
-    badge: "/icon-192.png",
+    icon: "/logo.svg",
+    badge: "/logo.svg",
     data: payload.data || {},
   });
 });

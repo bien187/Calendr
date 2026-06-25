@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CalendarDays } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 import { useAuth } from "@/store/useAuth";
 import { useWorkspace } from "@/store/useWorkspace";
 import { Button } from "@/components/ui/Button";
@@ -48,9 +48,7 @@ export default function InvitePage() {
     <ConfigGuard>
       <div className="grid min-h-dvh place-items-center px-6 text-center">
         <div className="w-full max-w-sm">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-accent text-white">
-            <CalendarDays className="h-7 w-7" />
-          </div>
+          <Logo size={56} className="mx-auto mb-4" />
 
           {group === undefined && (
             <div className="h-7 w-7 animate-spin rounded-full border-2 border-accent border-t-transparent mx-auto" />
