@@ -1,0 +1,14 @@
+{
+  "name": "Calendr — Familienkalender",
+  "short_name": "Calendr",
+  "description": "Der gemeinsame Kalender für deine Familie.",
+  "start_url": "/calendar",
+  "display": "standalone",
+  "background_color": "#0c0c0e",
+  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
