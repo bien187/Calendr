@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 247 247 249;
+  --surface: 255 255 255;
+  --elevated: 255 255 255;
+  --border: 229 229 234;
+  --fg: 17 17 19;
+  --muted: 120 120 128;
+  --accent: 37 99 235;
+  --font-sans: "Inter", system-ui;
+}
+
+.dark {
+  --bg: 12 12 14;
+  --surface: 24 24 27;
+  --elevated: 32 32 36;
+  --border: 42 42 48;
+  --fg: 244 244 245;
+  --muted: 142 142 150;
+  --accent: 59 130 246;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-bg text-fg antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* Hide scrollbars but keep scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe-area padding for mobile bottom nav (PWA) */
+.pb-safe {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+}
+.h-safe-nav {
+  height: calc(4rem + env(safe-area-inset-bottom));
+}
