@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Clock, MapPin, Repeat, Bell, Trash2, AlignLeft } from "lucide-react";
 import { Sheet } from "@/components/ui/Sheet";
 import { Button } from "@/components/ui/Button";
-import { Input, Label, Textarea, Select } from "@/components/ui/Field";
+import { Input, Label, Textarea, Select, DateTimeInput } from "@/components/ui/Field";
 import { useAuth } from "@/store/useAuth";
 import { useWorkspace } from "@/store/useWorkspace";
 import { createEvent, updateEvent, deleteEvent } from "@/lib/firebase/events";
@@ -184,7 +184,7 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
           <div className="grid grid-cols-2 gap-2">
             <div>
               <Label>{allDay ? "Von" : "Datum"}</Label>
-              <Input
+              <DateTimeInput
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
@@ -193,7 +193,7 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
             {allDay ? (
               <div>
                 <Label>Bis</Label>
-                <Input
+                <DateTimeInput
                   type="date"
                   value={endDate}
                   min={date}
@@ -204,7 +204,7 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <Label>Start</Label>
-                  <Input
+                  <DateTimeInput
                     type="time"
                     value={timeFrom}
                     onChange={(e) => setTimeFrom(e.target.value)}
@@ -212,7 +212,7 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
                 </div>
                 <div>
                   <Label>Ende</Label>
-                  <Input
+                  <DateTimeInput
                     type="time"
                     value={timeTo}
                     onChange={(e) => setTimeTo(e.target.value)}
