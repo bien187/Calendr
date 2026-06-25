@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 const VIEWS: { id: CalendarView; label: string }[] = [
   { id: "month", label: "Monat" },
   { id: "week", label: "Woche" },
+  { id: "schedule", label: "Tage" },
   { id: "agenda", label: "Liste" },
 ];
 
@@ -28,7 +29,8 @@ export function CalendarHeader() {
   const activeGroup = groups.find((g) => g.id === activeGroupId);
 
   function shift(dir: 1 | -1) {
-    if (view === "week") setFocusDate(addWeeks(focusDate, dir).getTime());
+    if (view === "week" || view === "schedule")
+      setFocusDate(addWeeks(focusDate, dir).getTime());
     else setFocusDate(addMonths(focusDate, dir).getTime());
   }
 

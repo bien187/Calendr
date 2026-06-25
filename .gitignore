@@ -36,3 +36,4 @@ functions/lib
 
 # typescript
 *.tsbuildinfo
+.env*

@@ -32,12 +32,20 @@ export function windowFor(view: CalendarView, focus: number): [number, number] {
         startOfWeek(d, weekOpts).getTime(),
         endOfWeek(d, weekOpts).getTime(),
       ];
+    case "schedule": {
+      // a rolling window of consecutive days starting at the focused day
+      const start = startOfDay(d).getTime();
+      return [start, start + SCHEDULE_DAYS * 86_400_000];
+    }
     case "agenda":
     default:
       // a rolling 3-month window for the agenda list
       return [startOfDay(d).getTime(), endOfMonth(addMonths(d, 2)).getTime()];
   }
 }
+
+/** Number of consecutive days rendered in the schedule (day-list) view. */
+export const SCHEDULE_DAYS = 45;
 
 /**
  * Subscribes to events for the active group within the view window, expands

@@ -9,6 +9,7 @@ import { SubgroupFilterBar } from "@/components/calendar/SubgroupFilterBar";
 import { AgendaView } from "@/components/calendar/AgendaView";
 import { MonthView } from "@/components/calendar/MonthView";
 import { WeekView } from "@/components/calendar/WeekView";
+import { ScheduleView } from "@/components/calendar/ScheduleView";
 import { EventSheet } from "@/components/calendar/EventSheet";
 import { NoGroup } from "@/components/groups/NoGroup";
 import type { EventOccurrence } from "@/lib/types";
@@ -47,6 +48,12 @@ export default function CalendarPage() {
           </div>
         ) : view === "agenda" ? (
           <AgendaView occurrences={occurrences} onSelect={openEdit} />
+        ) : view === "schedule" ? (
+          <ScheduleView
+            occurrences={occurrences}
+            onSelect={openEdit}
+            onCreate={(ts) => openCreate(ts)}
+          />
         ) : view === "month" ? (
           <MonthView
             occurrences={occurrences}

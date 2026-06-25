@@ -84,7 +84,7 @@ export interface CalendarEvent {
   updatedAt: number;
 }
 
-export type CalendarView = "month" | "week" | "agenda";
+export type CalendarView = "month" | "week" | "agenda" | "schedule";
 
 /** A concrete, materialised occurrence of an event (after recurrence expansion). */
 export interface EventOccurrence extends CalendarEvent {

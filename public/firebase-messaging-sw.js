@@ -10,12 +10,12 @@ importScripts(
 );
 
 firebase.initializeApp({
-  apiKey: "REPLACE_API_KEY",
-  authDomain: "REPLACE_AUTH_DOMAIN",
-  projectId: "REPLACE_PROJECT_ID",
-  storageBucket: "REPLACE_STORAGE_BUCKET",
-  messagingSenderId: "REPLACE_SENDER_ID",
-  appId: "REPLACE_APP_ID",
+  apiKey: "AIzaSyB8Wzq2D7sMhJZG3zugpxFvg1S-_E9KAeU",
+  authDomain: "calendr-5665e.firebaseapp.com",
+  projectId: "calendr-5665e",
+  storageBucket: "calendr-5665e.firebasestorage.app",
+  messagingSenderId: "1049406982097",
+  appId: "1:1049406982097:web:0b3b2e1a134d1702eac2f0",
 });
 
 const messaging = firebase.messaging();

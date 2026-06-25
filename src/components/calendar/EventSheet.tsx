@@ -48,10 +48,12 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
     profile?.notificationDefaults ?? [60]
   );
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // hydrate form when opened
   useEffect(() => {
     if (!open) return;
+    setError(null);
     if (editing) {
       setTitle(editing.title);
       setAllDay(editing.allDay);
@@ -86,8 +88,47 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
     return arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
   }
 
+  /** Returns a German error message, or null if the form is valid. */
+  function validate(): string | null {
+    if (!title.trim()) return "Bitte gib einen Titel ein.";
+    if (!date) return "Bitte wähle ein Datum.";
+
+    const start = allDay ? fromInputs(date, "00:00") : fromInputs(date, timeFrom);
+    const end = allDay
+      ? fromInputs(endDate || date, "23:59")
+      : fromInputs(date, timeTo);
+
+    if (allDay) {
+      if ((endDate || date) < date)
+        return "Das Enddatum muss am oder nach dem Startdatum liegen.";
+    } else if (end <= start) {
+      return "Die Endzeit muss nach der Startzeit liegen.";
+    }
+
+    // Only block past dates for *new* events — editing old ones stays allowed.
+    if (!editing) {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      if (allDay) {
+        if (fromInputs(date, "00:00") < todayStart.getTime())
+          return "Das Datum liegt in der Vergangenheit.";
+      } else if (start < Date.now()) {
+        return "Der Termin liegt in der Vergangenheit.";
+      }
+    }
+
+    return null;
+  }
+
   async function save() {
-    if (!activeGroupId || !profile || !title.trim()) return;
+    if (!activeGroupId || !profile) return;
+
+    const err = validate();
+    if (err) {
+      setError(err);
+      return;
+    }
+    setError(null);
     setSaving(true);
 
     const start = allDay
@@ -143,21 +184,28 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
       onClose={onClose}
       title={editing ? "Termin bearbeiten" : "Neuer Termin"}
       footer={
-        <div className="flex gap-2">
-          {editing && (
-            <Button variant="ghost" size="md" onClick={remove} className="text-red-600">
-              <Trash2 className="h-4 w-4" />
-            </Button>
+        <div className="space-y-2">
+          {error && (
+            <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600">
+              {error}
+            </p>
           )}
-          <Button
-            className="flex-1"
-            size="md"
-            onClick={save}
-            loading={saving}
-            disabled={!title.trim() || !activeGroupId}
-          >
-            {editing ? "Speichern" : "Erstellen"}
-          </Button>
+          <div className="flex gap-2">
+            {editing && (
+              <Button variant="ghost" size="md" onClick={remove} className="text-red-600">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              className="flex-1"
+              size="md"
+              onClick={save}
+              loading={saving}
+              disabled={!title.trim() || !activeGroupId}
+            >
+              {editing ? "Speichern" : "Erstellen"}
+            </Button>
+          </div>
         </div>
       }
     >
@@ -187,6 +235,7 @@ export function EventSheet({ open, onClose, editing, defaultStart }: Props) {
               <DateTimeInput
                 type="date"
                 value={date}
+                min={editing ? undefined : toDateInput(Date.now())}
                 onChange={(e) => setDate(e.target.value)}
               />
             </div>
