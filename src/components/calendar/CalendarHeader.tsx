@@ -72,39 +72,42 @@ export function CalendarHeader() {
           <Menu className="h-5 w-5" />
         </button>
 
-        {/* Period label → tap switches to Month view */}
-        <button
-          onClick={() => setView("month")}
-          className="flex min-w-0 items-center gap-1 rounded-lg px-1.5 py-1 text-left"
-        >
-          <span className="truncate text-lg font-bold capitalize tracking-tight">
-            {title()}
-          </span>
-          <ChevronDown className="h-4 w-4 shrink-0 text-muted" />
-        </button>
-
-        <div className="ml-auto flex shrink-0 items-center gap-0.5">
+        {/* Arrows + constant "Heute" (top-left) */}
+        <div className="flex shrink-0 items-center">
           <button
             onClick={() => shift(-1)}
-            className="grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-elevated"
+            className="grid h-9 w-8 place-items-center rounded-lg text-muted hover:bg-elevated"
             aria-label="Zurück"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={() => jumpTo(Date.now())}
-            className="rounded-lg px-2 py-1.5 text-xs font-semibold text-accent hover:bg-elevated"
+            className="rounded-lg px-1.5 py-1.5 text-xs font-semibold text-accent hover:bg-elevated"
           >
             Heute
           </button>
           <button
             onClick={() => shift(1)}
-            className="grid h-9 w-9 place-items-center rounded-lg text-muted hover:bg-elevated"
+            className="grid h-9 w-8 place-items-center rounded-lg text-muted hover:bg-elevated"
             aria-label="Weiter"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
+        </div>
 
+        {/* Period label → tap switches to Month view */}
+        <button
+          onClick={() => setView("month")}
+          className="flex min-w-0 items-center gap-1 rounded-lg px-1 py-1 text-left"
+        >
+          <span className="truncate text-base font-bold capitalize tracking-tight">
+            {title()}
+          </span>
+          <ChevronDown className="h-4 w-4 shrink-0 text-muted" />
+        </button>
+
+        <div className="ml-auto flex shrink-0 items-center gap-0.5">
           {/* View switcher */}
           <div className="relative">
             <button

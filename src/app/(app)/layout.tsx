@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/store/useAuth";
 import { ConfigGuard } from "@/components/ConfigGuard";
 import { WorkspaceProvider } from "@/components/providers/WorkspaceProvider";
+import { NotificationsSync } from "@/components/providers/NotificationsSync";
 import { BottomNav, SideNav } from "@/components/nav/BottomNav";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -26,6 +27,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <ConfigGuard>
       <WorkspaceProvider>
+        <NotificationsSync />
         <div className="flex min-h-dvh bg-bg">
           <SideNav />
           <main className="flex-1 pb-20 md:pb-0">{children}</main>

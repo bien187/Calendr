@@ -150,7 +150,7 @@ export function EndlessDayList({ expand, onSelect, onCreate, variant }: Props) {
       className="h-full overflow-y-auto overscroll-contain no-scrollbar"
     >
       <div ref={topSentinel} className="h-px" />
-      <div className="divide-y divide-border pb-24 md:pb-6">
+      <div className="flex flex-col gap-2.5 px-1 pt-2 pb-24 md:pb-6">
         {buckets.map(({ dayTs, items }) => (
           <DayRow
             key={dayTs}
