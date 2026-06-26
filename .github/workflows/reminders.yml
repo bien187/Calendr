@@ -4,7 +4,7 @@ name: Event reminders
 # GitHub Actions triggers the Vercel cron endpoint, which sends FCM pushes.
 on:
   schedule:
-    - cron: "*/15 * * * *" # every 15 minutes (UTC; GitHub may delay under load)
+    - cron: "* * * * *" # requested: every minute (GitHub Actions effectively coalesces to ~5 min)
   workflow_dispatch: {} # allow manual run from the Actions tab
 
 jobs:
