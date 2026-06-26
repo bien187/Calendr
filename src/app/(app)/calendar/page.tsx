@@ -6,9 +6,9 @@ import { useWorkspace } from "@/store/useWorkspace";
 import { useEvents } from "@/hooks/useEvents";
 import { CalendarHeader } from "@/components/calendar/CalendarHeader";
 import { SubgroupFilterBar } from "@/components/calendar/SubgroupFilterBar";
-import { AgendaView } from "@/components/calendar/AgendaView";
 import { MonthView } from "@/components/calendar/MonthView";
 import { WeekView } from "@/components/calendar/WeekView";
+import { WeekListView } from "@/components/calendar/WeekListView";
 import { ScheduleView } from "@/components/calendar/ScheduleView";
 import { EventSheet } from "@/components/calendar/EventSheet";
 import { NoGroup } from "@/components/groups/NoGroup";
@@ -17,7 +17,7 @@ import type { EventOccurrence } from "@/lib/types";
 export default function CalendarPage() {
   const view = useWorkspace((s) => s.view);
   const activeGroupId = useWorkspace((s) => s.activeGroupId);
-  const { occurrences, loading } = useEvents();
+  const { loading, expand } = useEvents();
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState<EventOccurrence | null>(null);
@@ -37,31 +37,23 @@ export default function CalendarPage() {
   if (!activeGroupId) return <NoGroup />;
 
   return (
-    <div className="relative flex h-dvh flex-col md:h-dvh">
+    <div className="relative flex h-dvh flex-col">
       <CalendarHeader />
       <SubgroupFilterBar />
 
-      <div className="flex-1 overflow-y-auto no-scrollbar">
-        {loading && occurrences.length === 0 ? (
-          <div className="grid place-items-center py-24">
+      <div className="relative min-h-0 flex-1">
+        {loading ? (
+          <div className="grid h-full place-items-center">
             <div className="h-7 w-7 animate-spin rounded-full border-2 border-accent border-t-transparent" />
           </div>
-        ) : view === "agenda" ? (
-          <AgendaView occurrences={occurrences} onSelect={openEdit} />
         ) : view === "schedule" ? (
-          <ScheduleView
-            occurrences={occurrences}
-            onSelect={openEdit}
-            onCreate={(ts) => openCreate(ts)}
-          />
+          <ScheduleView expand={expand} onSelect={openEdit} onCreate={openCreate} />
+        ) : view === "weekList" ? (
+          <WeekListView expand={expand} onSelect={openEdit} onCreate={openCreate} />
         ) : view === "month" ? (
-          <MonthView
-            occurrences={occurrences}
-            onSelect={openEdit}
-            onPickDay={(ts) => openCreate(ts + 9 * 3600_000)}
-          />
+          <MonthView expand={expand} onSelect={openEdit} onCreate={openCreate} />
         ) : (
-          <WeekView occurrences={occurrences} onSelect={openEdit} />
+          <WeekView expand={expand} onSelect={openEdit} />
         )}
       </div>
 

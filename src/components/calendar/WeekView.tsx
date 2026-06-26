@@ -28,10 +28,10 @@ type DragState =
   | null;
 
 export function WeekView({
-  occurrences,
+  expand,
   onSelect,
 }: {
-  occurrences: EventOccurrence[];
+  expand: (start: number, end: number) => EventOccurrence[];
   onSelect: (o: EventOccurrence) => void;
 }) {
   const focusDate = useWorkspace((s) => s.focusDate);
@@ -44,6 +44,12 @@ export function WeekView({
     const start = startOfWeek(focusDate, { weekStartsOn: 1 });
     return Array.from({ length: 7 }, (_, i) => addDays(start, i));
   }, [focusDate]);
+
+  const occurrences = useMemo(() => {
+    const start = days[0].getTime();
+    const end = days[6].getTime() + 86_400_000;
+    return expand(start, end);
+  }, [days, expand]);
 
   const timed = occurrences.filter((o) => !o.allDay);
   const allDay = occurrences.filter((o) => o.allDay);
@@ -141,7 +147,7 @@ export function WeekView({
       {/* Time grid */}
       <div
         ref={gridRef}
-        className="relative flex-1 overflow-y-auto no-scrollbar"
+        className="relative flex-1 overflow-y-auto no-scrollbar pb-24 md:pb-6"
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerLeave={() => drag && onPointerUp()}

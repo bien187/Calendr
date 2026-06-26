@@ -84,7 +84,8 @@ export interface CalendarEvent {
   updatedAt: number;
 }
 
-export type CalendarView = "month" | "week" | "agenda" | "schedule";
+/** week = timeline grid, weekList = single-week list, schedule = endless day list */
+export type CalendarView = "month" | "weekList" | "week" | "schedule";
 
 /** A concrete, materialised occurrence of an event (after recurrence expansion). */
 export interface EventOccurrence extends CalendarEvent {

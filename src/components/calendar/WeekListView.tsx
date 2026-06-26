@@ -3,8 +3,8 @@
 import { EndlessDayList } from "./EndlessDayList";
 import type { EventOccurrence } from "@/lib/types";
 
-/** Endless day-by-day list (default view). */
-export function ScheduleView({
+/** Endless day list with week separators (Woche · Liste). */
+export function WeekListView({
   expand,
   onSelect,
   onCreate,
@@ -15,7 +15,7 @@ export function ScheduleView({
 }) {
   return (
     <EndlessDayList
-      variant="schedule"
+      variant="weekList"
       expand={expand}
       onSelect={onSelect}
       onCreate={onCreate}

@@ -4,8 +4,6 @@ import {
   setDoc,
   updateDoc,
   deleteDoc,
-  query,
-  where,
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "./client";
@@ -51,48 +49,17 @@ export async function deleteEvent(groupId: string, eventId: string) {
 }
 
 /**
- * Subscribe to events in a group whose start is within [rangeStart, rangeEnd].
- *
- * Recurring events are matched by start only here; the recurrence expander
- * widens the picture client-side. To keep recurring series visible we also
- * include any event flagged as recurring regardless of start. Firestore can't
- * OR across fields cheaply, so we run two listeners and merge.
+ * Subscribe to ALL events in a group. At family scale (hundreds of events)
+ * this is cheap and lets the client expand recurrence + render any window
+ * (needed for endless scrolling without re-subscribing per scroll).
  */
-export function subscribeEventsInRange(
+export function subscribeAllEvents(
   groupId: string,
-  rangeStart: number,
-  rangeEnd: number,
   cb: (events: CalendarEvent[]) => void
 ) {
   const col = collection(db, "groups", groupId, "events");
-
-  const oneOff = query(
-    col,
-    where("start", ">=", rangeStart),
-    where("start", "<=", rangeEnd)
-  );
-  const recurring = query(col, where("recurrence.frequency", "!=", "none"));
-
-  let aEvents: CalendarEvent[] = [];
-  let bEvents: CalendarEvent[] = [];
-
-  const emit = () => {
-    const map = new Map<string, CalendarEvent>();
-    for (const e of [...aEvents, ...bEvents]) map.set(e.id, e);
-    cb([...map.values()]);
-  };
-
-  const unsubA = onSnapshot(oneOff, (snap) => {
-    aEvents = snap.docs.map((d) => d.data() as CalendarEvent);
-    emit();
+  return onSnapshot(col, (snap) => {
+    cb(snap.docs.map((d) => d.data() as CalendarEvent));
   });
-  const unsubB = onSnapshot(recurring, (snap) => {
-    bEvents = snap.docs.map((d) => d.data() as CalendarEvent);
-    emit();
-  });
-
-  return () => {
-    unsubA();
-    unsubB();
-  };
 }
+

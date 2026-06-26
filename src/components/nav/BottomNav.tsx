@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Users, CheckSquare, Settings } from "lucide-react";
+import { Home, Calendar, Users, NotebookPen } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 
 const tabs = [
+  { href: "/home", label: "Home", icon: Home },
   { href: "/calendar", label: "Kalender", icon: Calendar },
   { href: "/groups", label: "Gruppen", icon: Users },
-  { href: "/tasks", label: "Aufgaben", icon: CheckSquare },
-  { href: "/settings", label: "Einstellungen", icon: Settings },
+  { href: "/notes", label: "Notizen", icon: NotebookPen },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/90 backdrop-blur pb-safe md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface/95 backdrop-blur pb-safe md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-4">
         {tabs.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href);
@@ -24,13 +24,17 @@ export function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={cn(
-                "flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition",
-                active ? "text-accent" : "text-muted"
-              )}
+              className="flex flex-col items-center gap-1 py-2 text-[11px] font-medium"
             >
-              <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 2} />
-              {label}
+              <span
+                className={cn(
+                  "grid h-8 w-14 place-items-center rounded-full transition",
+                  active ? "bg-accent/15 text-accent" : "text-muted"
+                )}
+              >
+                <Icon className="h-5 w-5" strokeWidth={active ? 2.4 : 2} />
+              </span>
+              <span className={active ? "text-accent" : "text-muted"}>{label}</span>
             </Link>
           );
         })}

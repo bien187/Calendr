@@ -1,97 +1,48 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  startOfDay,
-  addMonths,
-} from "date-fns";
+import { useCallback, useEffect, useState } from "react";
 import { useWorkspace } from "@/store/useWorkspace";
-import { subscribeEventsInRange } from "@/lib/firebase/events";
+import { subscribeAllEvents } from "@/lib/firebase/events";
 import { expandEvents } from "@/lib/recurrence";
-import type { CalendarEvent, CalendarView, EventOccurrence } from "@/lib/types";
-
-const weekOpts = { weekStartsOn: 1 as const }; // Monday
-
-/** Compute the data window to fetch for a given view + focus date. */
-export function windowFor(view: CalendarView, focus: number): [number, number] {
-  const d = new Date(focus);
-  switch (view) {
-    case "month": {
-      // pad to full weeks shown in the grid
-      return [
-        startOfWeek(startOfMonth(d), weekOpts).getTime(),
-        endOfWeek(endOfMonth(d), weekOpts).getTime(),
-      ];
-    }
-    case "week":
-      return [
-        startOfWeek(d, weekOpts).getTime(),
-        endOfWeek(d, weekOpts).getTime(),
-      ];
-    case "schedule": {
-      // a rolling window of consecutive days starting at the focused day
-      const start = startOfDay(d).getTime();
-      return [start, start + SCHEDULE_DAYS * 86_400_000];
-    }
-    case "agenda":
-    default:
-      // a rolling 3-month window for the agenda list
-      return [startOfDay(d).getTime(), endOfMonth(addMonths(d, 2)).getTime()];
-  }
-}
-
-/** Number of consecutive days rendered in the schedule (day-list) view. */
-export const SCHEDULE_DAYS = 45;
+import type { CalendarEvent, EventOccurrence } from "@/lib/types";
 
 /**
- * Subscribes to events for the active group within the view window, expands
- * recurrence, and applies the active subgroup filter. Returns sorted
- * occurrences plus a loading flag.
+ * Loads all events for the active group once and returns a memoised `expand`
+ * that materialises recurrence into occurrences for any [windowStart,
+ * windowEnd] range, applying the active subgroup filter. This lets views
+ * render arbitrary (and growing) windows for endless scrolling.
  */
 export function useEvents() {
   const activeGroupId = useWorkspace((s) => s.activeGroupId);
-  const view = useWorkspace((s) => s.view);
-  const focusDate = useWorkspace((s) => s.focusDate);
   const filter = useWorkspace((s) => s.activeSubgroupFilter);
 
-  const [raw, setRaw] = useState<CalendarEvent[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const [winStart, winEnd] = useMemo(
-    () => windowFor(view, focusDate),
-    [view, focusDate]
-  );
 
   useEffect(() => {
     if (!activeGroupId) {
-      setRaw([]);
+      setEvents([]);
       setLoading(false);
       return;
     }
     setLoading(true);
-    const unsub = subscribeEventsInRange(
-      activeGroupId,
-      winStart,
-      winEnd,
-      (events) => {
-        setRaw(events);
-        setLoading(false);
-      }
-    );
+    const unsub = subscribeAllEvents(activeGroupId, (e) => {
+      setEvents(e);
+      setLoading(false);
+    });
     return unsub;
-  }, [activeGroupId, winStart, winEnd]);
+  }, [activeGroupId]);
 
-  const occurrences = useMemo<EventOccurrence[]>(() => {
-    const expanded = expandEvents(raw, winStart, winEnd);
-    if (filter.length === 0) return expanded;
-    return expanded.filter((o) =>
-      o.assignedSubgroups.some((id) => filter.includes(id))
-    );
-  }, [raw, winStart, winEnd, filter]);
+  const expand = useCallback(
+    (windowStart: number, windowEnd: number): EventOccurrence[] => {
+      const occ = expandEvents(events, windowStart, windowEnd);
+      if (filter.length === 0) return occ;
+      return occ.filter((o) =>
+        o.assignedSubgroups.some((id) => filter.includes(id))
+      );
+    },
+    [events, filter]
+  );
 
-  return { occurrences, loading, window: [winStart, winEnd] as const };
+  return { events, loading, expand };
 }
